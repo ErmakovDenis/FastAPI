@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Chat</title>
+	<style>
+		body{
+			font-family: Sans;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 10px;
+		}
+		.flex{
+			display: flex;
+			padding: 100px 0px;
+			flex-direction: column;
+			align-items: center;
+			gap: 10px;
+			flex: 1 0 0;
+			border-right: 1px solid #B9B9B9;
+			border-left: 1px solid #B9B9B9;
+			width: 1000px;
+			margin: auto;
+		}
+	</style>
+</head>
+
+<body>
+	<a href="http://0.0.0.0:8000/docs">Documentation</a>
+	<div class="flex">
+		<h1>Final Project - WebSock + CRUD + Notifications</h1>
+		<h2>Your ID: <span id="ws-id"></span></h2>
+		<ul id='messages'> </ul>
+		<form action="" onsubmit="sendMessage(event)">
+			<input type="text" id="messageText" autocomplete="off" />
+			<button>Send</button>
+		</form>
+	</div>
+	<script>
+
+	function appendMessage(msg) {
+		let messages = document.getElementById('messages')
+		let message = document.createElement('li')
+		let content = document.createTextNode(msg)
+		message.appendChild(content)
+		messages.appendChild(message)
+	}
+	let client_id = Math.floor(Math.random() * 1000) + 1
+	document.querySelector("#ws-id").textContent = client_id;
+	let ws = new WebSocket(`{{ ws_protocol }}://{{ server_urn }}/ws/${client_id}`);
+
+	ws.onmessage = function(event) {
+		appendMessage(event.data)
+	};
+
+	function sendMessage(event) {
+		let input = document.getElementById("messageText")
+		ws.send(input.value)
+		input.value = ''
+		event.preventDefault()
+	}
+	</script>
+</body>
+
+</html>
